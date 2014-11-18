@@ -25,7 +25,7 @@ namespace ImgurDotNetTest
                               "\n    Quit:                     quit" +
                               "\n=================================================");
 
-            Console.WriteLine("\nFirst, Please Type your Client ID:");
+            Console.WriteLine("\nFirst, please type your Client ID:");
             var clientId = Console.ReadLine();
 
             var command = "continue";

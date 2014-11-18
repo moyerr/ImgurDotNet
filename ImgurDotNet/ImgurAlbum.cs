@@ -36,7 +36,7 @@ namespace ImgurDotNet
         public PrivacyLevel Privacy { get; private set; }
         public LayoutType Layout { get; private set; }
         public int Views { get; private set; }
-        public string Link { get; private set; }
+        public Uri Link { get; private set; }
         public bool Favorite { get; private set; }
         public bool Nsfw { get; private set; }
         public string Section { get; private set; }
@@ -44,6 +44,11 @@ namespace ImgurDotNet
         public string DeleteHash { get; private set; }
         public int ImagesCount { get; private set; }
         public List<ImgurImage> Images { get; private set; }
+
+        public override string ToString()
+        {
+            return Link.ToString();
+        }
 
         public static ImgurAlbum Create(IDictionary<string, object> data)
         {
@@ -57,29 +62,28 @@ namespace ImgurDotNet
             var imageArrayRaw = (IList<object>) data["images"];
             var imageArray = imageArrayRaw.Select(image => ImgurImage.Create((IDictionary<string, object>) image)).ToList();
 
-            var album = new ImgurAlbum();
-
-            album.ID = (string) data["id"];
-            album.Title = (string) data["title"];
-            album.Description = (string) data["description"];
-            album.TimeAdded = ConvertDateTime(timeAddedRaw);
-            album.Cover = (string) data["cover"];
-            album.CoverWidth = Convert.ToInt32(data["cover_width"]);
-            album.CoverHeight = Convert.ToInt32(data["cover_height"]);
-            album.AccountID = data["account_url"] == null ? null : (string)data["account_url"];
-            album.Privacy = ConvertPrivacy(privacyRaw);
-            album.Layout = ConvertLayout(layoutRaw);
-            album.Views = Convert.ToInt32(data["views"]);
-            album.Link = (string) data["link"];
-            album.Favorite = (bool) data["favorite"];
-            album.Nsfw = data["nsfw"] != null && (bool) data["nsfw"];
-            album.Section = data["section"] == null ? null : (string) data["section"];
-            album.Order = order;
-            album.DeleteHash = deleteHash;
-            album.ImagesCount = Convert.ToInt32(data["images_count"]);
-            album.Images = imageArray;
-
-            return album;
+            return new ImgurAlbum
+            {
+                ID = (string) data["id"],
+                Title = (string) data["title"],
+                Description = (string) data["description"],
+                TimeAdded = ConvertDateTime(timeAddedRaw),
+                Cover = (string) data["cover"],
+                CoverWidth = Convert.ToInt32(data["cover_width"]),
+                CoverHeight = Convert.ToInt32(data["cover_height"]),
+                AccountID = data["account_url"] == null ? null : (string) data["account_url"],
+                Privacy = ConvertPrivacy(privacyRaw),
+                Layout = ConvertLayout(layoutRaw),
+                Views = Convert.ToInt32(data["views"]),
+                Link = new Uri((string) data["link"]),
+                Favorite = (bool) data["favorite"],
+                Nsfw = data["nsfw"] != null && (bool) data["nsfw"],
+                Section = data["section"] == null ? null : (string) data["section"],
+                Order = order,
+                DeleteHash = deleteHash,
+                ImagesCount = Convert.ToInt32(data["images_count"]),
+                Images = imageArray
+            };
         }
 
         #region Private Conversion Methods

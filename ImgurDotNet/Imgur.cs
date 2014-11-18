@@ -111,8 +111,12 @@ namespace ImgurDotNet
             string description = "",
             string albumID = "")
         {
-            byte[] bytes = File.ReadAllBytes(imageFilePath);
-
+            byte[] bytes;
+            if(File.Exists(imageFilePath))
+                bytes = File.ReadAllBytes(imageFilePath);
+            else
+                throw new FileNotFoundException("Could not find: " + imageFilePath);
+            
             var data = String.Format("image={0}{1}{2}{3}",
                 EscapeBase64(Convert.ToBase64String(bytes)),
                 title == "" ? "" : "&title=" + title,

@@ -61,7 +61,7 @@ namespace ImgurDotNet
 
             var timeAddedRaw = Convert.ToInt64(data["datetime"]);
 
-            return new ImgurImage()
+            return new ImgurImage
             {
                 ID = (string) data["id"],
                 Title = (string) data["title"],
