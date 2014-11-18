@@ -1,9 +1,21 @@
 ImgurDotNet
 ===========
 
-Imgur (Anonymous) API wrapper for .NET
+A .NET wrapper for the Imgur API, Version 3
 
+In order to use these APIs, you must have a Client ID, which you will recieve when you register your appliation with Imgur: https://api.imgur.com/oauth2/addclient
 
+Currently, this library only has support for accessing public read-only resources and anonymous actions. In other words, account authentication is not yet supported. With this library, you will be able to:  
+ - Get information about an existing album
+ - Get information about an existing image
+ - Upload an image from the web using a direct link
+ - Upload an image file using a file path, binary file, or a System.Drawing.Image object.
+ - Delete an image (must know the delete hash)
+
+<b>Coming soon:</b>
+ - Create an Album
+ - Add images to albums
+ - Get information about the many other Imgur data models (comments, accounts, votes, etc)
 
 License
 ===========
