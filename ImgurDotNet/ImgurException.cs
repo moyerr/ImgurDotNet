@@ -1,35 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using SimpleJson;
 
 namespace ImgurDotNet
 {
+    /// <summary>
+    /// Represents errors that occur during the use of the Imgur API.
+    /// </summary>
     public class ImgurException : Exception
     {
         public string Request { get; private set; }
         public string Method { get; private set; }
-        public string Format { get; private set; }
-        public string Parameters { get; private set; }
 
-        public ImgurException(string message, string request, string method, string format, string parameters)
+        public ImgurException(string message, string request, string method)
             : base(message)
         {
-            this.Request = request;
-            this.Method = method;
-            this.Format = format;
-            this.Parameters = parameters;
+            Request = request;
+            Method = method;
         }
 
         public static ImgurException Create(IDictionary<string, object> data)
         {
             return new ImgurException(
-                (string)data["message"],
+                (string)data["error"],
                 (string)data["request"],
-                (string)data["method"],
-                (string)data["format"],
-                (string)data["parameters"]
+                (string)data["method"]
                 );
         }
     }
