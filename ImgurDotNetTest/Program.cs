@@ -12,51 +12,234 @@ namespace ImgurDotNetTest
     {
         static void Main(string[] args)
         {
-            string testImageUri = "C:\\Users\\Jaco\\Pictures\\test.jpg";
-            var image = Image.FromFile(testImageUri);
-            
-            var imgur = new Imgur(String.Empty);
-            
-            var imgurImage = imgur.UploadImage(image, "API test_1", "API test_2", "API test_3", System.Drawing.Imaging.ImageFormat.Jpeg);
-            Program.DumpImage(imgurImage);
-           
-            var imgurStatsMonth = imgur.GetStats(ImgurStats.ViewTime.Month);
-            Console.WriteLine("Images viewed this month: {0}\n", imgurStatsMonth.ImagesViewed);
+            Console.WriteLine("\n=================================================\n" +
+                              "    Welcome to ImgurDotNetTest! Below you will\n" +
+                              "    find a list of valid commands to test the\n" +
+                              "    ImgurDotNet APIs." +
+                              "\n=================================================");
+            Console.WriteLine("    Get Album Info:           ga" +
+                              "\n    Get Image Info:           gi" +
+                              "\n    Create an Album           ca" +
+                              "\n    Delete an Album           da" +
+                              "\n    Upload Image From Web:    uiw" +
+                              "\n    Upload Image from File:   uif" +
+                              "\n    Delete an Image:          di" +
+                              "\n    Quit:                     quit" +
+                              "\n=================================================");
 
-            var imgurStatsWeek = imgur.GetStats(ImgurStats.ViewTime.Week);
-            Console.WriteLine("Images viewed this week: {0}\n", imgurStatsWeek.ImagesViewed);
+            Console.WriteLine("\nFirst, please type your Client ID:");
+            var clientId = Console.ReadLine();
 
-            var imgurStatsToday = imgur.GetStats(ImgurStats.ViewTime.Today);
-            Console.WriteLine("Images viewed today: {0}\n", imgurStatsToday.ImagesViewed);
+            var command = "continue";
+            var imgurTools = new Imgur(clientId);
 
-            var album = imgur.GetAlbum("hf1pO");
-            Console.WriteLine("Album name: {0}\nImage count: {1}\nType: {2}\n", album.Title, album.Images.Count, album.Layout);
-            foreach (var img in album.Images)
-                Program.DumpImage(img);
+            while (command != "quit")
+            {
+                Console.WriteLine("\nNext Command: ");
+                command = Console.ReadLine();
 
-            var imgurImage2 = imgur.GetImage(imgurImage.Hash);
-            Program.DumpImage(imgurImage2);
+                switch (command)
+                {
+                    case "ga":
+                        GetAlbumTest(imgurTools);
+                        break;
+                    case "gi":
+                        GetImageTest(imgurTools);
+                        break;
+                    case "ca":
+                        CreateAlbumTest(imgurTools);
+                        break;
+                    case "da":
+                        DeleteAlbumTest(imgurTools);
+                        break;
+                    case "uiw":
+                        UploadFromWebTest(imgurTools);
+                        break;
+                    case "uif":
+                        UploadFromFileTest(imgurTools);
+                        break;
+                    case "di":
+                        DeleteImageTest(imgurTools);
+                        break;
+                    case "quit":
+                        Console.WriteLine("\nClosing application...");
+                        Thread.Sleep(2000);
+                        break;
+                    default:
+                        Console.WriteLine("\nSorry, that command isn't recognized.");
+                        break;
+                }
+            }
+        }
 
-            imgur.DeleteImage(imgurImage.DeleteHash);
-            Console.WriteLine("Image deleted\nDelete hash: {0}", imgurImage.DeleteHash);
-
-            Thread.Sleep(10000);
-
+        #region Private Test Methods
+        private static void GetAlbumTest(Imgur imgur)
+        {
             try
             {
-                imgur.GetImage(imgurImage.Hash);
+                Console.WriteLine("\n=================================================\n" +
+                                  "    Get information about an existing album" +
+                                  "\n=================================================\n");
+                Console.WriteLine("Please type an album ID: ");
+                DumpAlbumInfo(imgur.GetAlbum(Console.ReadLine()));
             }
-            catch (ImgurException e)
+            catch (Exception ex)
             {
-                Console.WriteLine("ImgurException\nMessage: {0}\nRequest: {1}\n", e.Message, e.Request);
+                Console.WriteLine("\nERROR: " + ex.Message);
             }
-
-            Console.ReadLine();
         }
 
-        private static void DumpImage(ImgurImage img)
+        private static void CreateAlbumTest(Imgur imgur)
         {
-            Console.WriteLine("Image title: {0}\nImage caption: {1}\nImage url: {2}\n", img.Title, img.Caption, img.ImgurUrl);
+            try
+            {
+                Console.WriteLine("\n=================================================\n" +
+                                  "    Create an Imgur Album" +
+                                  "\n=================================================\n");
+                Console.WriteLine("Give the album a title: ");
+                var title = Console.ReadLine();
+
+                Console.WriteLine("\nGive the album a description: ");
+                var desc = Console.ReadLine();
+
+                Console.WriteLine("\nSet the album's privacy (public, hidden, secret): ");
+                var priv = Console.ReadLine();
+
+                Console.WriteLine("\nSet the album's layout (blog, grid, horizontal, vertical): ");
+                var lay = Console.ReadLine();
+
+                DumpAlbumInfo(imgur.CreateAlbum(title, desc, priv, lay));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("\nERROR: " + ex.Message);
+            }
         }
+
+        private static void DeleteAlbumTest(Imgur imgur)
+        {
+            try
+            {
+                Console.WriteLine("\n=================================================\n" +
+                                  "    Delete an existing album" +
+                                  "\n=================================================\n");
+                Console.WriteLine("Please type a the delete hash: ");
+                imgur.DeleteAlbum(Console.ReadLine());
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("\nERROR: " + ex.Message);
+            }
+        }
+
+        private static void GetImageTest(Imgur imgur)
+        {
+            try
+            {
+                Console.WriteLine("\n=================================================\n" +
+                                  "    Get information about an existing image" +
+                                  "\n=================================================\n");
+                Console.WriteLine("Please type an image ID: ");
+                DumpImageInfo(imgur.GetImage(Console.ReadLine()));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("\nERROR: " + ex.Message);
+            }
+        }
+
+        private static void DeleteImageTest(Imgur imgur)
+        {
+            try
+            {
+                Console.WriteLine("\n=================================================\n" +
+                                  "    Delete an existing image" +
+                                  "\n=================================================\n");
+                Console.WriteLine("Please type a the delete hash: ");
+                imgur.DeleteImage(Console.ReadLine());
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("\nERROR: " + ex.Message);
+            }
+        }
+
+        private static void UploadFromWebTest(Imgur imgur)
+        {
+            try
+            {
+                Console.WriteLine("\n=================================================\n" +
+                                  "    Upload an image from the web" +
+                                  "\n=================================================\n");
+
+                Console.WriteLine("Please type the URL for the direct link:");
+                var link = Console.ReadLine();
+
+                Console.WriteLine("\nPlease give the image a title:");
+                var title = Console.ReadLine();
+
+                Console.WriteLine("\nPlease give the image a description:");
+                var desc = Console.ReadLine();
+
+                Console.WriteLine("\nType an album ID if you want to add it to an album:");
+                var albId = Console.ReadLine();
+
+                DumpImageInfo(imgur.UploadImageFromWeb(link, title, desc, albId));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("\nERROR: " + ex.Message);
+            }
+        }
+
+        private static void UploadFromFileTest(Imgur imgur)
+        {
+            try
+            {
+                Console.WriteLine("\n===============================================\n" +
+                                  "    Upload an image from a file" +
+                                  "\n===============================================\n");
+
+                Console.WriteLine("Please type the file path for the image:");
+                var path = Console.ReadLine();
+
+                Console.WriteLine("\nPlease give the image a title:");
+                var title = Console.ReadLine();
+
+                Console.WriteLine("\nPlease give the image a description:");
+                var desc = Console.ReadLine();
+
+                Console.WriteLine("\nType an album ID if you want to add it to an album:");
+                var albId = Console.ReadLine();
+
+                DumpImageInfo(imgur.UploadImageFromFile(path, title, desc, albId));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("\nERROR: " + ex.Message);
+            }
+        }
+
+        private static void DumpImageInfo(ImgurImage img)
+        {
+            Console.WriteLine("\nImage Info:");
+            Console.WriteLine("    ID:          " + img.ID);
+            Console.WriteLine("    Link:        " + img.Link);
+            Console.WriteLine("    Image Type:  " + img.Type);
+            Console.WriteLine("    Date Added:  " + img.TimeAdded);
+            Console.WriteLine("    Views:       " + img.Views);
+            Console.WriteLine("    Delete Hash: " + img.DeleteHash);
+        }
+
+        private static void DumpAlbumInfo(ImgurAlbum alb)
+        {
+            Console.WriteLine("\nAlbum Info:");
+            Console.WriteLine("    Link:        " + alb.Link);
+            Console.WriteLine("    Image Count: " + alb.ImagesCount);
+            Console.WriteLine("    Date Added:  " + alb.TimeAdded);
+            Console.WriteLine("    Views:       " + alb.Views);
+            Console.WriteLine("    Delete Hash: " + alb.DeleteHash);
+        }
+        #endregion
     }
 }
