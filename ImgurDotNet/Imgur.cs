@@ -13,6 +13,7 @@ namespace ImgurDotNet
     public class Imgur
     {
         private const string UPLOAD_URL = "https://api.imgur.com/3/upload";
+        private const string CREATE_ALBUM_URL = "https://api.imgur.com/3/album/";
         private const string ALBUM_URL = "https://api.imgur.com/3/album/{0}";
         private const string IMAGE_URL = "https://api.imgur.com/3/image/{0}";
 
@@ -44,7 +45,7 @@ namespace ImgurDotNet
         }
 
         #region Album Actions
-        public ImgurAlbum GetAlbum(string albumId)
+        public ImgurAlbum GetAlbum(string albumId, string deleteHash = "")
         {
             var response = GetParsedJsonResponse(String.Format(ALBUM_URL, albumId));
             var responseData = (IDictionary<string, object>) response["data"];
@@ -52,11 +53,63 @@ namespace ImgurDotNet
 
             if (first.Key == "error")
                 throw ImgurException.Create(responseData);
-            
+
             if (first.Key == "id")
+            {
+                if (!responseData.ContainsKey("deletehash")) responseData.Add("deletehash", deleteHash);
                 return ImgurAlbum.Create(responseData);
-            
+            }
+
             throw new Exception("Couldn't parse response: " + first.Key);
+        }
+
+        public ImgurAlbum CreateAlbum(string title = "",
+            string description = "",
+            string privacy = "",
+            string layout = "")
+        {
+            var listOfArgs = new List<string>();
+            if (title != "") listOfArgs.Add("title=" + title);
+            if (description != "") listOfArgs.Add("description=" + description);
+            if (privacy != "") listOfArgs.Add("privacy=" + privacy);
+            if (layout != "") listOfArgs.Add("layout=" + layout);
+
+            for (int i = 0; i < listOfArgs.Count; i++)
+            {
+                if (i > 0) listOfArgs[i] = listOfArgs[i].Insert(0, "&");
+            }
+
+            var data = listOfArgs.Aggregate("", (current, arg) => current + arg);
+
+            var response = GetParsedJsonResponse(CREATE_ALBUM_URL, data);
+            var responseData = (IDictionary<string, object>) response["data"];
+            var first = responseData.First();
+
+            if (first.Key == "error")
+                throw ImgurException.Create(responseData);
+
+            if (first.Key == "id")
+                return GetAlbum((string) responseData["id"], (string) responseData["deletehash"]);
+
+            throw new Exception("Couldn't parse response: " + first.Key);
+        }
+
+        public void DeleteAlbum(string deleteHash)
+        {
+            var response = GetParsedJsonResponse(String.Format(ALBUM_URL, deleteHash), RequestMethod.DELETE);
+            var success = (bool)response["success"];
+
+            if (success) return;
+
+            var responseData = (IDictionary<string, object>)response["data"];
+
+            if (responseData.First().Key == "error")
+                throw ImgurException.Create(responseData);
+        }
+
+        public void DeleteAlbum(ImgurAlbum album)
+        {
+            DeleteAlbum(album.DeleteHash);
         }
         #endregion
 

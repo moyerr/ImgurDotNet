@@ -19,6 +19,8 @@ namespace ImgurDotNetTest
                               "\n=================================================");
             Console.WriteLine("    Get Album Info:           ga" +
                               "\n    Get Image Info:           gi" +
+                              "\n    Create an Album           ca" +
+                              "\n    Delete an Album           da" +
                               "\n    Upload Image From Web:    uiw" +
                               "\n    Upload Image from File:   uif" +
                               "\n    Delete an Image:          di" +
@@ -43,6 +45,12 @@ namespace ImgurDotNetTest
                         break;
                     case "gi":
                         GetImageTest(imgurTools);
+                        break;
+                    case "ca":
+                        CreateAlbumTest(imgurTools);
+                        break;
+                    case "da":
+                        DeleteAlbumTest(imgurTools);
                         break;
                     case "uiw":
                         UploadFromWebTest(imgurTools);
@@ -81,6 +89,49 @@ namespace ImgurDotNetTest
             }
         }
 
+        private static void CreateAlbumTest(Imgur imgur)
+        {
+            try
+            {
+                Console.WriteLine("\n=================================================\n" +
+                                  "    Create an Imgur Album" +
+                                  "\n=================================================\n");
+                Console.WriteLine("Give the album a title: ");
+                var title = Console.ReadLine();
+
+                Console.WriteLine("\nGive the album a description: ");
+                var desc = Console.ReadLine();
+
+                Console.WriteLine("\nSet the album's privacy (public, hidden, secret): ");
+                var priv = Console.ReadLine();
+
+                Console.WriteLine("\nSet the album's layout (blog, grid, horizontal, vertical): ");
+                var lay = Console.ReadLine();
+
+                DumpAlbumInfo(imgur.CreateAlbum(title, desc, priv, lay));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("\nERROR: " + ex.Message);
+            }
+        }
+
+        private static void DeleteAlbumTest(Imgur imgur)
+        {
+            try
+            {
+                Console.WriteLine("\n=================================================\n" +
+                                  "    Delete an existing album" +
+                                  "\n=================================================\n");
+                Console.WriteLine("Please type a the delete hash: ");
+                imgur.DeleteAlbum(Console.ReadLine());
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("\nERROR: " + ex.Message);
+            }
+        }
+
         private static void GetImageTest(Imgur imgur)
         {
             try
@@ -102,7 +153,7 @@ namespace ImgurDotNetTest
             try
             {
                 Console.WriteLine("\n=================================================\n" +
-                                  "            Delete an existing image" +
+                                  "    Delete an existing image" +
                                   "\n=================================================\n");
                 Console.WriteLine("Please type a the delete hash: ");
                 imgur.DeleteImage(Console.ReadLine());
@@ -118,7 +169,7 @@ namespace ImgurDotNetTest
             try
             {
                 Console.WriteLine("\n=================================================\n" +
-                                  "          Upload an image from the web" +
+                                  "    Upload an image from the web" +
                                   "\n=================================================\n");
 
                 Console.WriteLine("Please type the URL for the direct link:");
@@ -130,7 +181,10 @@ namespace ImgurDotNetTest
                 Console.WriteLine("\nPlease give the image a description:");
                 var desc = Console.ReadLine();
 
-                DumpImageInfo(imgur.UploadImageFromWeb(link, title, desc));
+                Console.WriteLine("\nType an album ID if you want to add it to an album:");
+                var albId = Console.ReadLine();
+
+                DumpImageInfo(imgur.UploadImageFromWeb(link, title, desc, albId));
             }
             catch (Exception ex)
             {
@@ -143,7 +197,7 @@ namespace ImgurDotNetTest
             try
             {
                 Console.WriteLine("\n===============================================\n" +
-                                  "          Upload an image from a file" +
+                                  "    Upload an image from a file" +
                                   "\n===============================================\n");
 
                 Console.WriteLine("Please type the file path for the image:");
@@ -155,7 +209,10 @@ namespace ImgurDotNetTest
                 Console.WriteLine("\nPlease give the image a description:");
                 var desc = Console.ReadLine();
 
-                DumpImageInfo(imgur.UploadImageFromFile(path, title, desc));
+                Console.WriteLine("\nType an album ID if you want to add it to an album:");
+                var albId = Console.ReadLine();
+
+                DumpImageInfo(imgur.UploadImageFromFile(path, title, desc, albId));
             }
             catch (Exception ex)
             {
@@ -181,6 +238,7 @@ namespace ImgurDotNetTest
             Console.WriteLine("    Image Count: " + alb.ImagesCount);
             Console.WriteLine("    Date Added:  " + alb.TimeAdded);
             Console.WriteLine("    Views:       " + alb.Views);
+            Console.WriteLine("    Delete Hash: " + alb.DeleteHash);
         }
         #endregion
     }
