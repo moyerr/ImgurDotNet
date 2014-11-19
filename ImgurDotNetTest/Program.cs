@@ -58,7 +58,7 @@ namespace ImgurDotNetTest
                         Thread.Sleep(2000);
                         break;
                     default:
-                        Console.WriteLine("Sorry, that command isn't recognized.");
+                        Console.WriteLine("\nSorry, that command isn't recognized.");
                         break;
                 }
             }
@@ -67,65 +67,100 @@ namespace ImgurDotNetTest
         #region Private Test Methods
         private static void GetAlbumTest(Imgur imgur)
         {
-            Console.WriteLine("\n=================================================\n" +
-                              "    Get information about an existing album" +
-                              "\n=================================================\n");
-            Console.WriteLine("Please type an album ID: ");
-            DumpAlbumInfo(imgur.GetAlbum(Console.ReadLine()));
+            try
+            {
+                Console.WriteLine("\n=================================================\n" +
+                                  "    Get information about an existing album" +
+                                  "\n=================================================\n");
+                Console.WriteLine("Please type an album ID: ");
+                DumpAlbumInfo(imgur.GetAlbum(Console.ReadLine()));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("\nERROR: " + ex.Message);
+            }
         }
 
         private static void GetImageTest(Imgur imgur)
         {
-            Console.WriteLine("\n=================================================\n" +
-                              "    Get information about an existing image" +
-                              "\n=================================================\n");
-            Console.WriteLine("Please type an image ID: ");
-            DumpImageInfo(imgur.GetImage(Console.ReadLine()));
+            try
+            {
+                Console.WriteLine("\n=================================================\n" +
+                                  "    Get information about an existing image" +
+                                  "\n=================================================\n");
+                Console.WriteLine("Please type an image ID: ");
+                DumpImageInfo(imgur.GetImage(Console.ReadLine()));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("\nERROR: " + ex.Message);
+            }
         }
 
         private static void DeleteImageTest(Imgur imgur)
         {
-            Console.WriteLine("\n=================================================\n" +
-                              "            Delete an existing image" +
-                              "\n=================================================\n");
-            Console.WriteLine("Please type a the delete hash: ");
-            imgur.DeleteImage(Console.ReadLine());
+            try
+            {
+                Console.WriteLine("\n=================================================\n" +
+                                  "            Delete an existing image" +
+                                  "\n=================================================\n");
+                Console.WriteLine("Please type a the delete hash: ");
+                imgur.DeleteImage(Console.ReadLine());
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("\nERROR: " + ex.Message);
+            }
         }
 
         private static void UploadFromWebTest(Imgur imgur)
         {
-            Console.WriteLine("\n=================================================\n" +
-                              "          Upload an image from the web" +
-                              "\n=================================================\n");
-            
-            Console.WriteLine("Please type the URL for the direct link:");
-            var link = Console.ReadLine();
+            try
+            {
+                Console.WriteLine("\n=================================================\n" +
+                                  "          Upload an image from the web" +
+                                  "\n=================================================\n");
 
-            Console.WriteLine("\nPlease give the image a title:");
-            var title = Console.ReadLine();
+                Console.WriteLine("Please type the URL for the direct link:");
+                var link = Console.ReadLine();
 
-            Console.WriteLine("\nPlease give the image a description:");
-            var desc = Console.ReadLine();
+                Console.WriteLine("\nPlease give the image a title:");
+                var title = Console.ReadLine();
 
-            DumpImageInfo(imgur.UploadImageFromWeb(link, title, desc));
+                Console.WriteLine("\nPlease give the image a description:");
+                var desc = Console.ReadLine();
+
+                DumpImageInfo(imgur.UploadImageFromWeb(link, title, desc));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("\nERROR: " + ex.Message);
+            }
         }
 
         private static void UploadFromFileTest(Imgur imgur)
         {
-            Console.WriteLine("\n===============================================\n" +
-                              "          Upload an image from a file" +
-                              "\n===============================================\n");
+            try
+            {
+                Console.WriteLine("\n===============================================\n" +
+                                  "          Upload an image from a file" +
+                                  "\n===============================================\n");
 
-            Console.WriteLine("Please type the file path for the image:");
-            var path = Console.ReadLine();
+                Console.WriteLine("Please type the file path for the image:");
+                var path = Console.ReadLine();
 
-            Console.WriteLine("\nPlease give the image a title:");
-            var title = Console.ReadLine();
+                Console.WriteLine("\nPlease give the image a title:");
+                var title = Console.ReadLine();
 
-            Console.WriteLine("\nPlease give the image a description:");
-            var desc = Console.ReadLine();
+                Console.WriteLine("\nPlease give the image a description:");
+                var desc = Console.ReadLine();
 
-            DumpImageInfo(imgur.UploadImageFromFile(path, title, desc));
+                DumpImageInfo(imgur.UploadImageFromFile(path, title, desc));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("\nERROR: " + ex.Message);
+            }
         }
 
         private static void DumpImageInfo(ImgurImage img)
