@@ -11,7 +11,7 @@ Currently, this library only has support for accessing public read-only resource
  - Get information about an account
  - Get information about a comment
  - Create an album
- - Add image created album upon image upload
+ - Add image to a created album upon image upload
  - Upload an image from the web using a direct link
  - Upload an image file using a file path, binary file, or a System.Drawing.Image object.
  - Delete an image
