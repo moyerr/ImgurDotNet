@@ -19,6 +19,7 @@ namespace ImgurDotNetTest
                               "\n=================================================");
             Console.WriteLine("    Get Album Info:           ga" +
                               "\n    Get Image Info:           gi" +
+                              "\n    Get Account Info          gac" +
                               "\n    Create an Album           ca" +
                               "\n    Delete an Album           da" +
                               "\n    Upload Image From Web:    uiw" +
@@ -45,6 +46,9 @@ namespace ImgurDotNetTest
                         break;
                     case "gi":
                         GetImageTest(imgurTools);
+                        break;
+                    case "gac":
+                        GetAccountTest(imgurTools);
                         break;
                     case "ca":
                         CreateAlbumTest(imgurTools);
@@ -220,6 +224,22 @@ namespace ImgurDotNetTest
             }
         }
 
+        private static void GetAccountTest(Imgur imgur)
+        {
+            try
+            {
+                Console.WriteLine("\n=================================================\n" +
+                                  "    Get information about an existing account" +
+                                  "\n=================================================\n");
+                Console.WriteLine("Please type an account username: ");
+                DumpAccountInfo(imgur.GetAccount(Console.ReadLine()));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("\nERROR: " + ex.Message);
+            }
+        }
+
         private static void DumpImageInfo(ImgurImage img)
         {
             Console.WriteLine("\nImage Info:");
@@ -229,6 +249,17 @@ namespace ImgurDotNetTest
             Console.WriteLine("    Date Added:  " + img.TimeAdded);
             Console.WriteLine("    Views:       " + img.Views);
             Console.WriteLine("    Delete Hash: " + img.DeleteHash);
+        }
+
+        private static void DumpAccountInfo(ImgurAccount acc)
+        {
+            Console.WriteLine("\nAccount Info:");
+            Console.WriteLine("    ID:          " + acc.ID);
+            Console.WriteLine("    Link:        " + acc.Url);
+            Console.WriteLine("    Bio:         " + acc.Bio);
+            Console.WriteLine("    Reputation:  " + acc.Reputation);
+            Console.WriteLine("    Created on:  " + acc.Created);
+            Console.WriteLine("    Pro user:    " + acc.ProAccount);
         }
 
         private static void DumpAlbumInfo(ImgurAlbum alb)
