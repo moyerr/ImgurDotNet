@@ -16,6 +16,8 @@ namespace ImgurDotNet
         private const string CREATE_ALBUM_URL = "https://api.imgur.com/3/album/";
         private const string ALBUM_URL = "https://api.imgur.com/3/album/{0}";
         private const string IMAGE_URL = "https://api.imgur.com/3/image/{0}";
+        private const string ACCOUNT_URL = "https://api.imgur.com/3/account/{0}";
+        private const string COMMENT_URL = "https://api.imgur.com/3/comment/{0}";
 
         private static string ClientID;
 
@@ -217,6 +219,40 @@ namespace ImgurDotNet
         public void DeleteImage(ImgurImage img)
         {
             DeleteImage(img.DeleteHash);
+        }
+        #endregion
+
+        #region Account Actions
+        public ImgurAccount GetAccount(string username)
+        {
+            var response = GetParsedJsonResponse(String.Format(ACCOUNT_URL, username));
+            var responseData = (IDictionary<string, object>)response["data"];
+            var first = responseData.First();
+
+            if (first.Key == "error")
+                throw ImgurException.Create(responseData);
+
+            if (first.Key == "id")
+                return ImgurAccount.Create(responseData);
+            
+            throw new Exception("Couldn't parse response: " + first.Key);
+        }
+        #endregion
+
+        #region Comment Actions
+        public ImgurComment GetComment(string commentId)
+        {
+            var response = GetParsedJsonResponse(String.Format(COMMENT_URL, commentId));
+            var responseData = (IDictionary<string, object>)response["data"];
+            var first = responseData.First();
+
+            if (first.Key == "error")
+                throw ImgurException.Create(responseData);
+
+            if (first.Key == "id")
+                return ImgurComment.Create(responseData);
+
+            throw new Exception("Couldn't parse response: " + first.Key);
         }
         #endregion
 

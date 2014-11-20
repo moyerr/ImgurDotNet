@@ -19,8 +19,10 @@ namespace ImgurDotNetTest
                               "\n=================================================");
             Console.WriteLine("    Get Album Info:           ga" +
                               "\n    Get Image Info:           gi" +
-                              "\n    Create an Album           ca" +
-                              "\n    Delete an Album           da" +
+                              "\n    Get Account Info:         gac" +
+                              "\n    Get Comment Info:         gc" +
+                              "\n    Create an Album:          ca" +
+                              "\n    Delete an Album:          da" +
                               "\n    Upload Image From Web:    uiw" +
                               "\n    Upload Image from File:   uif" +
                               "\n    Delete an Image:          di" +
@@ -45,6 +47,12 @@ namespace ImgurDotNetTest
                         break;
                     case "gi":
                         GetImageTest(imgurTools);
+                        break;
+                    case "gac":
+                        GetAccountTest(imgurTools);
+                        break;
+                    case "gc":
+                        GetCommentTest(imgurTools);
                         break;
                     case "ca":
                         CreateAlbumTest(imgurTools);
@@ -220,6 +228,38 @@ namespace ImgurDotNetTest
             }
         }
 
+        private static void GetAccountTest(Imgur imgur)
+        {
+            try
+            {
+                Console.WriteLine("\n=================================================\n" +
+                                  "    Get information about an existing account" +
+                                  "\n=================================================\n");
+                Console.WriteLine("Please type an account username: ");
+                DumpAccountInfo(imgur.GetAccount(Console.ReadLine()));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("\nERROR: " + ex.Message);
+            }
+        }
+
+        private static void GetCommentTest(Imgur imgur)
+        {
+            try
+            {
+                Console.WriteLine("\n=================================================\n" +
+                                  "    Get information about a comment" +
+                                  "\n=================================================\n");
+                Console.WriteLine("Please type a comment ID: ");
+                DumpCommentInfo(imgur.GetComment(Console.ReadLine()));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("\nERROR: " + ex.Message);
+            }
+        }
+
         private static void DumpImageInfo(ImgurImage img)
         {
             Console.WriteLine("\nImage Info:");
@@ -229,6 +269,28 @@ namespace ImgurDotNetTest
             Console.WriteLine("    Date Added:  " + img.TimeAdded);
             Console.WriteLine("    Views:       " + img.Views);
             Console.WriteLine("    Delete Hash: " + img.DeleteHash);
+        }
+
+        private static void DumpCommentInfo(ImgurComment com)
+        {
+            Console.WriteLine("\nComment Info:");
+            Console.WriteLine("    ID:          " + com.ID);
+            Console.WriteLine("    Comment:     " + com.Comment);
+            Console.WriteLine("    Author:      " + com.Author);
+            Console.WriteLine("    Date Added:  " + com.DateTime);
+            Console.WriteLine("    Replies:     " + com.Children.Count);
+            Console.WriteLine("    Score:       " + com.Points);
+        }
+
+        private static void DumpAccountInfo(ImgurAccount acc)
+        {
+            Console.WriteLine("\nAccount Info:");
+            Console.WriteLine("    ID:          " + acc.ID);
+            Console.WriteLine("    Link:        " + acc.Url);
+            Console.WriteLine("    Bio:         " + acc.Bio);
+            Console.WriteLine("    Reputation:  " + acc.Reputation);
+            Console.WriteLine("    Created on:  " + acc.Created);
+            Console.WriteLine("    Pro user:    " + acc.ProAccount);
         }
 
         private static void DumpAlbumInfo(ImgurAlbum alb)
