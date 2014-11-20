@@ -44,6 +44,7 @@
     <Compile Include="Imgur.cs" />
     <Compile Include="ImgurAccount.cs" />
     <Compile Include="ImgurAlbum.cs" />
+    <Compile Include="ImgurComment.cs" />
     <Compile Include="ImgurException.cs" />
     <Compile Include="ImgurImage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
