@@ -252,7 +252,7 @@ namespace ImgurDotNetTest
                                   "    Get information about a comment" +
                                   "\n=================================================\n");
                 Console.WriteLine("Please type a comment ID: ");
-                DumpCommentInfo(imgur.GetComment(Console.ReadLine()));
+                DumpCommentInfo(imgur.GetComment(Console.ReadLine(), true));
             }
             catch (Exception ex)
             {
