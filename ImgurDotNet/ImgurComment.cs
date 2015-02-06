@@ -5,6 +5,11 @@ using System.Text;
 
 namespace ImgurDotNet
 {
+
+    /// <summary>
+    /// Represents a comment on Imgur -- read about this Imgur API data model
+    /// here: https://api.imgur.com/models/comment
+    /// </summary>
     public class ImgurComment
     {
         public int ID { get; private set; }

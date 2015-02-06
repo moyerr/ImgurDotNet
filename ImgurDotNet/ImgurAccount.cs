@@ -6,6 +6,11 @@ using System.Text;
 
 namespace ImgurDotNet
 {
+
+    /// <summary>
+    /// Represents the basic account information. You can request the account information about any user -- read about this Imgur API data model
+    /// here: https://api.imgur.com/models/account
+    /// </summary>
     public class ImgurAccount
     {
         public int ID { get; private set; }
