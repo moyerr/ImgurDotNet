@@ -6,7 +6,7 @@ namespace ImgurDotNet
 {
     /// <summary>
     /// Represents an album of images on Imgur -- read about this Imgur API data model
-    /// here: https://api.imgur.com/model/album
+    /// here: https://api.imgur.com/models/album
     /// </summary>
     public class ImgurAlbum
     {

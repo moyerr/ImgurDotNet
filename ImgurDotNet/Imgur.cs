@@ -240,9 +240,9 @@ namespace ImgurDotNet
         #endregion
 
         #region Comment Actions
-        public ImgurComment GetComment(string commentId)
+        public ImgurComment GetComment(string commentId, bool getReplies)
         {
-            var response = GetParsedJsonResponse(String.Format(COMMENT_URL, commentId));
+            var response = GetParsedJsonResponse(String.Format(getReplies ? COMMENT_URL + "/replies" : COMMENT_URL, commentId));
             var responseData = (IDictionary<string, object>)response["data"];
             var first = responseData.First();
 
