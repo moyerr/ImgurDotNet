@@ -49,44 +49,41 @@ namespace ImgurDotNet
             return Link.ToString();
         }
 
-        public static ImgurImage Create(IDictionary<string, object> data)
+        public ImgurImage(IDictionary<string, object> data)
         {
-            var imgName = data.ContainsKey("name") ? (string) data["name"] : null;
+            var imgName = data.ContainsKey("name") ? (string)data["name"] : null;
             var desc = data.ContainsKey("description") ? (string)data["description"] : null;
-            var deleteHash = data.ContainsKey("deletehash") ? (string) data["deletehash"] : null;
-            var gifvUri = data.ContainsKey("gifv") ? new Uri((string) data["gifv"]) : null;
-            var mp4Uri = data.ContainsKey("mp4") ? new Uri((string) data["mp4"]) : null;
-            var webmUri = data.ContainsKey("webm") ? new Uri((string) data["webm"]) : null;
-            var isLooping = data.ContainsKey("looping") && (bool) data["looping"];
+            var deleteHash = data.ContainsKey("deletehash") ? (string)data["deletehash"] : null;
+            var gifvUri = data.ContainsKey("gifv") ? new Uri((string)data["gifv"]) : null;
+            var mp4Uri = data.ContainsKey("mp4") ? new Uri((string)data["mp4"]) : null;
+            var webmUri = data.ContainsKey("webm") ? new Uri((string)data["webm"]) : null;
+            var isLooping = data.ContainsKey("looping") && (bool)data["looping"];
 
             var timeAddedRaw = Convert.ToInt64(data["datetime"]);
 
-            return new ImgurImage
-            {
-                ID = (string) data["id"],
-                Title = (string) data["title"],
-                Description = desc,
-                TimeAdded = ConvertDate(timeAddedRaw),
-                Type = (string) data["type"],
-                Animated = (bool) data["animated"],
-                Height = Convert.ToInt32(data["height"]),
-                Width = Convert.ToInt32(data["width"]),
-                Size = Convert.ToInt32(data["size"]),
-                Views = Convert.ToInt32(data["views"]),
-                Bandwith = Convert.ToInt64(data["bandwidth"]),
-                DeleteHash = deleteHash,
-                Name = imgName,
-                Section = data["section"] == null ? null : (string) data["section"],
-                Link = new Uri((string) data["link"]),
-                Gifv = gifvUri,
-                Mp4 = mp4Uri,
-                Webm = webmUri,
-                Looping = isLooping,
-                Favorite = (bool) data["favorite"],
-                Nsfw = data["nsfw"] != null && (bool) data["nsfw"],
-                Vote = data["vote"] == null ? null : (string) data["vote"],
-                AccountID = data["account_url"] == null ? null : (string) data["account_url"]
-            };
+            ID = (string) data["id"];
+            Title = (string) data["title"];
+            Description = desc;
+            TimeAdded = ConvertDate(timeAddedRaw);
+            Type = (string) data["type"];
+            Animated = (bool) data["animated"];
+            Height = Convert.ToInt32(data["height"]);
+            Width = Convert.ToInt32(data["width"]);
+            Size = Convert.ToInt32(data["size"]);
+            Views = Convert.ToInt32(data["views"]);
+            Bandwith = Convert.ToInt64(data["bandwidth"]);
+            DeleteHash = deleteHash;
+            Name = imgName;
+            Section = data["section"] == null ? null : (string) data["section"];
+            Link = new Uri((string) data["link"]);
+            Gifv = gifvUri;
+            Mp4 = mp4Uri;
+            Webm = webmUri;
+            Looping = isLooping;
+            Favorite = (bool) data["favorite"];
+            Nsfw = data["nsfw"] != null && (bool) data["nsfw"];
+            Vote = data["vote"] == null ? null : (string) data["vote"];
+            AccountID = data["account_url"] == null ? null : (string) data["account_url"];
         }
 
         private static DateTime ConvertDate(long epochTime)
@@ -126,6 +123,11 @@ namespace ImgurDotNet
             }
 
             return new Uri(String.Format(linkTemplate, ID, thumb, extension));
+        }
+
+        public class ImageWrapper : ImgurResponse<ImgurImage>
+        {
+            
         }
     }
 }

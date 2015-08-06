@@ -17,23 +17,24 @@ namespace ImgurDotNetTest
                               "    find a list of valid commands to test the\n" +
                               "    ImgurDotNet APIs." +
                               "\n=================================================");
-            Console.WriteLine("    Get Album Info:           ga" +
-                              "\n    Get Image Info:           gi" +
-                              "\n    Get Account Info:         gac" +
-                              "\n    Get Comment Info:         gc" +
-                              "\n    Create an Album:          ca" +
-                              "\n    Delete an Album:          da" +
-                              "\n    Upload Image From Web:    uiw" +
-                              "\n    Upload Image from File:   uif" +
-                              "\n    Delete an Image:          di" +
-                              "\n    Quit:                     quit" +
+            Console.WriteLine("    Get Album Info:              ga" +
+                              "\n    Get Image Info:              gi" +
+                              "\n    Get Image Thumbnail Link:    git" +
+                              "\n    Get Account Info:            gac" +
+                              "\n    Get Comment Info:            gc" +
+                              "\n    Create an Album:             ca" +
+                              "\n    Delete an Album:             da" +
+                              "\n    Upload Image From Web:       uiw" +
+                              "\n    Upload Image from File:      uif" +
+                              "\n    Delete an Image:             di" +
+                              "\n    Quit:                        quit" +
                               "\n=================================================");
 
             Console.WriteLine("\nFirst, please type your Client ID:");
             var clientId = Console.ReadLine();
 
             var command = "continue";
-            var imgurTools = new Imgur(clientId);
+            var imgurTools = new ImgurUtils(clientId);
 
             while (command != "quit")
             {
@@ -47,6 +48,9 @@ namespace ImgurDotNetTest
                         break;
                     case "gi":
                         GetImageTest(imgurTools);
+                        break;
+                    case "git":
+                        GetImageThumbnailTest(imgurTools);
                         break;
                     case "gac":
                         GetAccountTest(imgurTools);
@@ -81,7 +85,7 @@ namespace ImgurDotNetTest
         }
 
         #region Private Test Methods
-        private static void GetAlbumTest(Imgur imgur)
+        private static void GetAlbumTest(ImgurUtils imgur)
         {
             try
             {
@@ -97,7 +101,7 @@ namespace ImgurDotNetTest
             }
         }
 
-        private static void CreateAlbumTest(Imgur imgur)
+        private static void CreateAlbumTest(ImgurUtils imgur)
         {
             try
             {
@@ -124,7 +128,7 @@ namespace ImgurDotNetTest
             }
         }
 
-        private static void DeleteAlbumTest(Imgur imgur)
+        private static void DeleteAlbumTest(ImgurUtils imgur)
         {
             try
             {
@@ -140,7 +144,7 @@ namespace ImgurDotNetTest
             }
         }
 
-        private static void GetImageTest(Imgur imgur)
+        private static void GetImageTest(ImgurUtils imgur)
         {
             try
             {
@@ -156,14 +160,46 @@ namespace ImgurDotNetTest
             }
         }
 
-        private static void DeleteImageTest(Imgur imgur)
+        public static Dictionary<string,ImgurImage.ThumbnailSize> ThumbSizes = new Dictionary
+                <string, ImgurImage.ThumbnailSize>
+            {
+                {"small", ImgurImage.ThumbnailSize.SmallThumbnail},
+                {"medium", ImgurImage.ThumbnailSize.MediumThumbnail},
+                {"large", ImgurImage.ThumbnailSize.LargeThumbnail},
+                {"huge", ImgurImage.ThumbnailSize.HugeThumbnail},
+                {"small square", ImgurImage.ThumbnailSize.SmallSquare},
+                {"big square", ImgurImage.ThumbnailSize.BigSquare}
+            };
+
+        private static void GetImageThumbnailTest(ImgurUtils imgur)
+        {
+            try
+            {
+                Console.WriteLine("\n=================================================\n" +
+                                  "    Get the link for an image's thumbnail" +
+                                  "\n=================================================\n");
+                Console.WriteLine("Please type an image ID: ");
+                var id = Console.ReadLine();
+
+                Console.WriteLine("\nWhat size thumbnail? (small, medium, large, huge, small square, big square)");
+                var thumb = Console.ReadLine();
+
+                Console.WriteLine("\n" + imgur.GetImage(id).GetThumbnail(ThumbSizes[thumb]));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("\nERROR: " + ex.Message);
+            }
+        }
+
+        private static void DeleteImageTest(ImgurUtils imgur)
         {
             try
             {
                 Console.WriteLine("\n=================================================\n" +
                                   "    Delete an existing image" +
                                   "\n=================================================\n");
-                Console.WriteLine("Please type a the delete hash: ");
+                Console.WriteLine("Please type the delete hash: ");
                 imgur.DeleteImage(Console.ReadLine());
             }
             catch (Exception ex)
@@ -172,7 +208,7 @@ namespace ImgurDotNetTest
             }
         }
 
-        private static void UploadFromWebTest(Imgur imgur)
+        private static void UploadFromWebTest(ImgurUtils imgur)
         {
             try
             {
@@ -200,7 +236,7 @@ namespace ImgurDotNetTest
             }
         }
 
-        private static void UploadFromFileTest(Imgur imgur)
+        private static void UploadFromFileTest(ImgurUtils imgur)
         {
             try
             {
@@ -228,7 +264,7 @@ namespace ImgurDotNetTest
             }
         }
 
-        private static void GetAccountTest(Imgur imgur)
+        private static void GetAccountTest(ImgurUtils imgur)
         {
             try
             {
@@ -244,7 +280,7 @@ namespace ImgurDotNetTest
             }
         }
 
-        private static void GetCommentTest(Imgur imgur)
+        private static void GetCommentTest(ImgurUtils imgur)
         {
             try
             {

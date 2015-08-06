@@ -50,41 +50,74 @@ namespace ImgurDotNet
             return Link.ToString();
         }
 
-        public static ImgurAlbum Create(IDictionary<string, object> data)
+        public ImgurAlbum(IDictionary<string, object> data)
         {
-            var layoutRaw = (string) data["layout"];
-            var privacyRaw = (string) data["privacy"];
+            var layoutRaw = (string)data["layout"];
+            var privacyRaw = (string)data["privacy"];
             var timeAddedRaw = Convert.ToInt64(data["datetime"]);
 
-            var deleteHash = data.ContainsKey("deletehash") ? (string) data["deletehash"] : null;
+            var deleteHash = data.ContainsKey("deletehash") ? (string)data["deletehash"] : null;
             var order = data.ContainsKey("order") ? Convert.ToInt32(data["order"]) : 0;
-            
-            var imageArrayRaw = (IList<object>) data["images"];
-            var imageArray = imageArrayRaw.Select(image => ImgurImage.Create((IDictionary<string, object>) image)).ToList();
 
-            return new ImgurAlbum
-            {
-                ID = (string) data["id"],
-                Title = (string) data["title"],
-                Description = (string) data["description"],
-                TimeAdded = ConvertDateTime(timeAddedRaw),
-                Cover = (string) data["cover"],
-                CoverWidth = Convert.ToInt32(data["cover_width"]),
-                CoverHeight = Convert.ToInt32(data["cover_height"]),
-                AccountID = data["account_url"] == null ? null : (string) data["account_url"],
-                Privacy = ConvertPrivacy(privacyRaw),
-                Layout = ConvertLayout(layoutRaw),
-                Views = Convert.ToInt32(data["views"]),
-                Link = new Uri((string) data["link"]),
-                Favorite = (bool) data["favorite"],
-                Nsfw = data["nsfw"] != null && (bool) data["nsfw"],
-                Section = data["section"] == null ? null : (string) data["section"],
-                Order = order,
-                DeleteHash = deleteHash,
-                ImagesCount = Convert.ToInt32(data["images_count"]),
-                Images = imageArray
-            };
+            var imageArrayRaw = (IList<object>)data["images"];
+            var imageArray = imageArrayRaw.Select(image => new ImgurImage((IDictionary<string, object>)image)).ToList();
+
+            ID = (string) data["id"];
+            Title = (string) data["title"];
+            Description = (string) data["description"];
+            TimeAdded = ConvertDateTime(timeAddedRaw);
+            Cover = (string) data["cover"];
+            CoverWidth = Convert.ToInt32(data["cover_width"]);
+            CoverHeight = Convert.ToInt32(data["cover_height"]);
+            AccountID = data["account_url"] == null ? null : (string) data["account_url"];
+            Privacy = ConvertPrivacy(privacyRaw);
+            Layout = ConvertLayout(layoutRaw);
+            Views = Convert.ToInt32(data["views"]);
+            Link = new Uri((string) data["link"]);
+            Favorite = (bool) data["favorite"];
+            Nsfw = data["nsfw"] != null && (bool) data["nsfw"];
+            Section = data["section"] == null ? null : (string) data["section"];
+            Order = order;
+            DeleteHash = deleteHash;
+            ImagesCount = Convert.ToInt32(data["images_count"]);
+            Images = imageArray;
         }
+
+        //public static ImgurAlbum Create(IDictionary<string, object> data)
+        //{
+        //    var layoutRaw = (string) data["layout"];
+        //    var privacyRaw = (string) data["privacy"];
+        //    var timeAddedRaw = Convert.ToInt64(data["datetime"]);
+
+        //    var deleteHash = data.ContainsKey("deletehash") ? (string) data["deletehash"] : null;
+        //    var order = data.ContainsKey("order") ? Convert.ToInt32(data["order"]) : 0;
+            
+        //    var imageArrayRaw = (IList<object>) data["images"];
+        //    var imageArray = imageArrayRaw.Select(image => ImgurImage.Create((IDictionary<string, object>) image)).ToList();
+
+        //    return new ImgurAlbum
+        //    {
+        //        ID = (string) data["id"],
+        //        Title = (string) data["title"],
+        //        Description = (string) data["description"],
+        //        TimeAdded = ConvertDateTime(timeAddedRaw),
+        //        Cover = (string) data["cover"],
+        //        CoverWidth = Convert.ToInt32(data["cover_width"]),
+        //        CoverHeight = Convert.ToInt32(data["cover_height"]),
+        //        AccountID = data["account_url"] == null ? null : (string) data["account_url"],
+        //        Privacy = ConvertPrivacy(privacyRaw),
+        //        Layout = ConvertLayout(layoutRaw),
+        //        Views = Convert.ToInt32(data["views"]),
+        //        Link = new Uri((string) data["link"]),
+        //        Favorite = (bool) data["favorite"],
+        //        Nsfw = data["nsfw"] != null && (bool) data["nsfw"],
+        //        Section = data["section"] == null ? null : (string) data["section"],
+        //        Order = order,
+        //        DeleteHash = deleteHash,
+        //        ImagesCount = Convert.ToInt32(data["images_count"]),
+        //        Images = imageArray
+        //    };
+        //}
 
         #region Private Conversion Methods
         private static DateTime ConvertDateTime(long epochTime)
