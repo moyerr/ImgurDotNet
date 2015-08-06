@@ -57,33 +57,6 @@ namespace ImgurDotNet
             ProExpiration = isProAcct ? ConvertDate(proAcct) : new DateTime();
         }
 
-        //public static ImgurAccount Create(IDictionary<string, object> data)
-        //{
-        //    var timeAddedRaw = Convert.ToInt64(data["created"]);
-        //    bool isProAcct;
-        //    long proAcct = 0;
-        //    try
-        //    {
-        //        isProAcct = (bool) data["pro_expiration"];
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        isProAcct = true;
-        //        proAcct = Convert.ToInt64(data["pro_expiration"]);
-        //    }
-
-        //    return new ImgurAccount
-        //    {
-        //        ID = Convert.ToInt32(data["id"]),
-        //        Username = (string) data["url"],
-        //        Bio = (string) data["bio"],
-        //        Reputation = Convert.ToDouble(data["reputation"]),
-        //        Created = ConvertDate(timeAddedRaw),
-        //        ProAccount = isProAcct,
-        //        ProExpiration = isProAcct ? ConvertDate(proAcct) : new DateTime()
-        //    };
-        //}
-
         private static DateTime ConvertDate(long epochTime)
         {
             return new DateTime(1970, 1, 1).AddSeconds(epochTime);

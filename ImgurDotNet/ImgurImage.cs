@@ -124,10 +124,5 @@ namespace ImgurDotNet
 
             return new Uri(String.Format(linkTemplate, ID, thumb, extension));
         }
-
-        public class ImageWrapper : ImgurResponse<ImgurImage>
-        {
-            
-        }
     }
 }

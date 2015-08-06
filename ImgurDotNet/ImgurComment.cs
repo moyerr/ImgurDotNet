@@ -56,32 +56,6 @@ namespace ImgurDotNet
             Children = commentArray;
         }
 
-        //public static ImgurComment Create(IDictionary<string, object> data)
-        //{
-        //    var commentArrayRaw = (IList<object>) data["children"];
-        //    var commentArray = commentArrayRaw.Select(comment => Create((IDictionary<string, object>) comment)).ToList();
-        //    var dateTimeRaw = Convert.ToInt64(data["datetime"]);
-            
-        //    return new ImgurComment
-        //    {
-        //        ID = Convert.ToInt32(data["id"]),
-        //        ImageID = (string) data["image_id"],
-        //        Comment = (string) data["comment"],
-        //        Author = (string) data["author"],
-        //        AuthorID = Convert.ToInt32(data["author_id"]),
-        //        OnAlbum = (bool) data["on_album"],
-        //        AlbumCover = (string) data["album_cover"],
-        //        Ups = Convert.ToInt32(data["ups"]),
-        //        Downs = Convert.ToInt32(data["downs"]),
-        //        Points = Convert.ToInt32(data["points"]),
-        //        DateTime = ConvertDate(dateTimeRaw),
-        //        ParentID = Convert.ToInt32(data["parent_id"]),
-        //        Deleted = (bool) data["deleted"],
-        //        Vote = (string) data["vote"],
-        //        Children = commentArray
-        //    };
-        //}
-
         private static DateTime ConvertDate(long epochTime)
         {
             return new DateTime(1970, 1, 1).AddSeconds(epochTime);

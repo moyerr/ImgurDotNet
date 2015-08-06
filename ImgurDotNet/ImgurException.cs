@@ -40,14 +40,5 @@ namespace ImgurDotNet
                     return RequestMethod.GET;
             }
         }
-
-    //    public static ImgurException Create(IDictionary<string, object> data)
-    //    {
-    //        return new ImgurException(
-    //            (string)data["error"],
-    //            (string)data["request"],
-    //            (string)data["method"]
-    //            );
-    //    }
     }
 }
