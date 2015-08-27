@@ -29,9 +29,29 @@ namespace ImgurDotNet
         private const string ACCOUNT_URL = API_URL + "account/{0}";
         private const string COMMENT_URL = API_URL + "comment/{0}";
 
-        private static string ClientID;
+        private string ClientID;
 
-        private static readonly Dictionary<RequestMethod, string> MethodsDict = new Dictionary<RequestMethod,string>
+        /// <summary>Total credits/requests allowed per day for this aplication/client ID.</summary>
+        /// <remarks>Value only available after executing any API request. More info: https://api.imgur.com/#limits</remarks>
+        public UInt32? ClientLimit { get; private set; }
+
+        /// <summary>Total credits available/remaining today for this aplication/client ID.</summary>
+        /// <remarks>Value only available after executing any API request. More info: https://api.imgur.com/#limits</remarks>
+        public UInt32? ClientLimitRemaining { get; private set; }
+
+        /// <summary>Total credits/requests allowed per day for this IP address.</summary>
+        /// <remarks>Value only available after executing any API request. More info: https://api.imgur.com/#limits</remarks>
+        public UInt32? UserLimit { get; private set; }
+
+        /// <summary>Total credits available/remaining today for this IP address.</summary>
+        /// <remarks>Value only available after executing any API request. More info: https://api.imgur.com/#limits</remarks>
+        public UInt32? UserLimitRemaining { get; private set; }
+
+        /// <summary>Timestamp for when the credits will be reset for this IP address</summary>
+        /// <remarks>Value only available after executing any API request. More info: https://api.imgur.com/#limits</remarks>
+        public DateTime? UserLimitReset { get; private set; }
+
+        private static readonly Dictionary<RequestMethod, string> MethodsDict = new Dictionary<RequestMethod, string>
         {
             { RequestMethod.GET, "GET"},
             { RequestMethod.POST, "POST"},
@@ -54,7 +74,7 @@ namespace ImgurDotNet
         public ImgurAlbum GetAlbum(string albumId, string deleteHash = "")
         {
             var response = GetParsedJsonResponse(String.Format(ALBUM_URL, albumId));
-            var responseData = (IDictionary<string, object>) response["data"];
+            var responseData = (IDictionary<string, object>)response["data"];
             var first = responseData.First();
 
             if (first.Key == "error")
@@ -85,14 +105,14 @@ namespace ImgurDotNet
             var data = listOfArgs.Aggregate("", (current, arg) => current + arg);
 
             var response = GetParsedJsonResponse(CREATE_ALBUM_URL, data);
-            var responseData = (IDictionary<string, object>) response["data"];
+            var responseData = (IDictionary<string, object>)response["data"];
             var first = responseData.First();
 
             if (first.Key == "error")
                 throw new ImgurException(responseData);
 
             if (first.Key == "id")
-                return GetAlbum((string) responseData["id"], (string) responseData["deletehash"]);
+                return GetAlbum((string)responseData["id"], (string)responseData["deletehash"]);
 
             throw new Exception("Couldn't parse response: " + first.Key);
         }
@@ -120,14 +140,14 @@ namespace ImgurDotNet
         public ImgurImage GetImage(string imageId)
         {
             var response = GetParsedJsonResponse(String.Format(IMAGE_URL, imageId));
-            var responseData = (IDictionary<string, object>) response["data"];
+            var responseData = (IDictionary<string, object>)response["data"];
             var first = responseData.First();
 
             if (first.Key == "error")
                 throw new ImgurException(responseData);
 
             if (first.Key == "id")
-                return new ImgurImage (responseData);
+                return new ImgurImage(responseData);
 
             throw new Exception("Couldn't parse response: " + first.Key);
         }
@@ -135,7 +155,7 @@ namespace ImgurDotNet
         private ImgurImage UploadImage(string data)
         {
             var response = GetParsedJsonResponse(UPLOAD_URL, data);
-            var responseData = (IDictionary<string, object>) response["data"];
+            var responseData = (IDictionary<string, object>)response["data"];
             var first = responseData.First();
 
             if (first.Key == "error")
@@ -168,7 +188,7 @@ namespace ImgurDotNet
             string albumID = "")
         {
             byte[] bytes = File.ReadAllBytes(imageFilePath);
-            
+
             var data = String.Format("image={0}{1}{2}{3}",
                 EscapeBase64(Convert.ToBase64String(bytes)),
                 title == "" ? "" : "&title=" + title,
@@ -195,8 +215,8 @@ namespace ImgurDotNet
         }
 
         public ImgurImage UploadImage(Image image, ImageFormat format,
-            string title = "", 
-            string description = "", 
+            string title = "",
+            string description = "",
             string albumID = "")
         {
             var stream = new MemoryStream();
@@ -207,12 +227,12 @@ namespace ImgurDotNet
         public void DeleteImage(string deleteHash)
         {
             var response = GetParsedJsonResponse(String.Format(IMAGE_URL, deleteHash), RequestMethod.DELETE);
-            var success = (bool) response["success"];
+            var success = (bool)response["success"];
 
             if (success) return;
-            
-            var responseData = (IDictionary<string, object>) response["data"];
-            
+
+            var responseData = (IDictionary<string, object>)response["data"];
+
             if (responseData.First().Key == "error")
                 throw new ImgurException(responseData);
         }
@@ -235,7 +255,7 @@ namespace ImgurDotNet
 
             if (first.Key == "id")
                 return new ImgurAccount(responseData);
-            
+
             throw new Exception("Couldn't parse response: " + first.Key);
         }
         #endregion
@@ -264,8 +284,8 @@ namespace ImgurDotNet
 
             if (str.Length > 32766)
             {
-                escaped += EscapeBase64(str.Substring(0, str.Length/2));
-                escaped += EscapeBase64(str.Substring(str.Length/2));
+                escaped += EscapeBase64(str.Substring(0, str.Length / 2));
+                escaped += EscapeBase64(str.Substring(str.Length / 2));
             }
             else
             {
@@ -275,12 +295,31 @@ namespace ImgurDotNet
             return escaped;
         }
 
-        private static IDictionary<string, object> GetParsedJsonResponse(WebRequest req)
+        private IDictionary<string, object> GetParsedJsonResponse(WebRequest req)
         {
             Stream resp;
+            WebResponse webResponse;
             try
             {
-                resp = req.GetResponse().GetResponseStream();
+                webResponse = req.GetResponse();
+                resp = webResponse.GetResponseStream();
+                try
+                {
+                    this.ClientLimit = UInt32.Parse(webResponse.Headers["X-RateLimit-ClientLimit"]);
+                    this.ClientLimitRemaining = UInt32.Parse(webResponse.Headers["X-RateLimit-ClientRemaining"]);
+                    this.UserLimit = UInt32.Parse(webResponse.Headers["X-RateLimit-UserLimit"]);
+                    this.UserLimitRemaining = UInt32.Parse(webResponse.Headers["X-RateLimit-UserRemaining"]);
+
+                    string unixTimestamp = webResponse.Headers["X-RateLimit-UserReset"];
+                    long unixTimeStamp = long.Parse(unixTimestamp);
+                    DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
+                    dtDateTime = dtDateTime.AddSeconds(unixTimeStamp).ToLocalTime();
+                    this.UserLimitReset = dtDateTime;
+                }
+                catch (FormatException)
+                {
+                    //unable to retrieve user and client limits
+                }
             }
             catch (WebException e)
             {
@@ -288,30 +327,30 @@ namespace ImgurDotNet
             }
             var reader = new StreamReader(resp);
             var deserializer = new JavaScriptSerializer();
-            var responseData = (IDictionary<string, object>) deserializer.DeserializeObject(reader.ReadToEnd());
+            var responseData = (IDictionary<string, object>)deserializer.DeserializeObject(reader.ReadToEnd());
             reader.Close();
             if (resp != null) resp.Close();
             return responseData;
-        } 
+        }
 
-        private static IDictionary<string, object> GetParsedJsonResponse(string url)
+        private IDictionary<string, object> GetParsedJsonResponse(string url)
         {
             var request = WebRequest.Create(url);
             request.Headers.Add("Authorization", "Client-ID " + ClientID);
-            
+
             return GetParsedJsonResponse(request);
         }
-        
-        private static IDictionary<string, object> GetParsedJsonResponse(string url, RequestMethod method)
+
+        private IDictionary<string, object> GetParsedJsonResponse(string url, RequestMethod method)
         {
             var request = WebRequest.Create(url);
             request.Method = MethodsDict[method];
             request.Headers.Add("Authorization", "Client-ID " + ClientID);
-            
+
             return GetParsedJsonResponse(request);
         }
 
-        private static IDictionary<string, object> GetParsedJsonResponse(string url, string postData)
+        private IDictionary<string, object> GetParsedJsonResponse(string url, string postData)
         {
             var request = WebRequest.Create(url);
             request.ContentType = "application/x-www-form-urlencoded";

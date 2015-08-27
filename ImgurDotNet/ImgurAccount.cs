@@ -42,7 +42,7 @@ namespace ImgurDotNet
             {
                 isProAcct = (bool)data["pro_expiration"];
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 isProAcct = true;
                 proAcct = Convert.ToInt64(data["pro_expiration"]);
